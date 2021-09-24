@@ -1,0 +1,9 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pytest = ">=6.2.5"
+pytest_mock = ">=3.6.1"
+mock = ">=4.0.3"
