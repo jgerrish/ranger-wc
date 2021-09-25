@@ -10,10 +10,14 @@ can be useful in other projects.
 The project also contains a github workflow for pipenv to install
 dependencies and run lints and tests.
 
+
+
 Tested with Ranger 1.9.3
 
 Installation
 ============
+
+![python tests](https://github.com/jgerrish/ranger-wc/actions/workflows/python-package.yml/badge.svg)
 
 Copy the directory to your ranger plugins directory:
 
