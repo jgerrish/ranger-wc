@@ -19,7 +19,7 @@ To run tests:
 
 pipenv install
 
-PYTHONPATH=. pytests
+pipenv run python -m pytest
 
 Author
 ======

@@ -1,11 +1,22 @@
 # Wordcount support library
-import bytesize
 import os
 import re, subprocess
 
 from logging import getLogger
 
 LOG = getLogger(__name__)
+
+try:
+    LOG.debug("trying to import humanize")
+    import humanize
+    bytesize_func = humanize.naturalsize
+except ImportError:
+    LOG.debug("trying to import bytesize")
+    try:
+        import bytesize
+        bytesize_func = bytesize.bytesize.Size
+    except ImportError:
+        bytesize_func = lambda: ""
 
 class WCHelper:
     """
@@ -22,9 +33,11 @@ class WCHelper:
         # Capture the second field, which is the number of words in the file
         # This may be platform-dependent
         self.matcher = re.compile(r"\s+[0-9]+\s+([0-9]+)\s+[0-9]+.*")
+        self.bytesize_func = bytesize_func
 
     def size_as_bytesize(self, size):
-        bs = bytesize.bytesize.Size(size)
+        #bs = humanize.naturalsize(size)
+        bs = bytesize_func(size)
         return str(bs)
 
     # TODO: Figure out how to re-use the info from ranger

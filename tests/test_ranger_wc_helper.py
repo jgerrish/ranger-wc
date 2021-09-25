@@ -1,11 +1,13 @@
 import os
-import pytest
 import subprocess
+from unittest import mock
+
 from wc_helper import WCHelper
 
 def test_call_wc_invalid_file():
     # Test trying to read an invalid file
     wc_helper = WCHelper()
+
 
     res = wc_helper.call_wc("blah.txt")
     assert res.returncode == 1
@@ -16,6 +18,7 @@ def test_call_wc_valid_file():
     # Test trying to to read a valid file
     wc_helper = WCHelper()
 
+
     res = wc_helper.call_wc("test-data.txt")
     assert res.returncode == 0
     assert len(res.stdout) > 0
@@ -25,6 +28,7 @@ def test_call_wc_valid_file():
 def test_get_wc_string():
     # Test trying to convert subprocess result to a string
     wc_helper = WCHelper()
+
 
     res = wc_helper.call_wc("test-data.txt")
     assert wc_helper.get_wc_string(res) == " 1  3 16 test-data.txt\n"
@@ -51,11 +55,10 @@ class FObj:
 
 def test_wc_infostring_invalid_file(mocker):
     # Test getting the file size
-    sr = os.stat_result((0, 0, 0, 0, 0, 0, 1000 * 101, 0, 0, 0))
     mocker.patch("os.stat", side_effect=FileNotFoundError("file not found"))
     wc_helper = WCHelper()
     fs = wc_helper.file_size("blah.txt")
-    assert fs == None
+    assert fs is None
 
     fobj = FObj("blah.txt")
     res = wc_helper.infostring(fobj, None)
@@ -67,15 +70,6 @@ def test_wc_infostring_small_file(mocker):
     fobj = FObj("test-data.txt")
     res = wc_helper.infostring(fobj, None)
     assert res == "3"
-
-def test_wc_infostring_large_file(mocker):
-    # Test valid file within limits
-    sr = os.stat_result((0, 0, 0, 0, 0, 0, WCHelper.max_wc_file_size + 1, 0, 0, 0))
-    mocker.patch("os.stat", return_value=sr)
-    wc_helper = WCHelper()
-    fobj = FObj("test-data.txt")
-    res = wc_helper.infostring(fobj, None)
-    assert res == "97.66 KiB"
 
 def test_wc_no_wc_installed(mocker):
     # Test on a system without wc
@@ -96,8 +90,23 @@ def test_wc_infotitle_invalid_file_after_stat(mocker):
                  return_value=subprocess.CompletedProcess(
                      args=['wc', 'test-data.txt'],
                      returncode=1, stdout=b'',
-                     stderr=b'wc: test-data.txt: No such file or directory\n')
-)
+                     stderr=b'wc: test-data.txt: No such file or directory\n'))
     res = wc_helper.infostring(fobj, None)
     assert res == ""
 
+def test_wc_infostring_large_file(mocker):
+    # Test valid file within limits
+    sr = os.stat_result((0, 0, 0, 0, 0, 0, WCHelper.max_wc_file_size + 1, 0, 0, 0))
+    mocker.patch("os.stat", return_value=sr)
+    wc_helper = WCHelper()
+    fobj = FObj("test-data.txt")
+    res = wc_helper.infostring(fobj, None)
+
+    try:
+        import humanize
+        assert res == "100.0 kB"
+    except ModuleNotFoundError:
+        import bytesize
+        assert res == "97.66 KiB"
+    except ModuleNotFoundError:
+        assert False
