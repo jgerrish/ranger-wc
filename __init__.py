@@ -29,13 +29,8 @@ class WCLinemode(LinemodeBase):
         return fobj.relative_path
     
     def infostring(self, fobj, metadata):
-        # Add the number of words in the file to the linemode
-        # Or return the empty string
-        res = self.call_wc(fobj.relative_path)
-        if res.returncode == 0:
-            wc_string = self.get_wc_string(res)
-            wc = self.get_wc(wc_string)
-            if wc:
-                return "{}".format(wc)
-
-        return ""
+        """
+        Add the number of words in the file to the linemode
+        Or return the empty string
+        """
+        return self.wc_helper.infostring(fobj, metadata)
