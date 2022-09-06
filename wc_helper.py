@@ -6,6 +6,7 @@ A support library for the ranger wordcount linemode plugin
 import os
 import re
 import subprocess
+from typing import Union
 
 from logging import getLogger
 
@@ -13,7 +14,7 @@ LOG = getLogger(__name__)
 
 
 def dummy_bytesize_func(
-    value: float | str,
+    value: Union[float, str],
     binary: bool = False,
     gnu: bool = False,
     format: str = "%.1f",
@@ -58,7 +59,7 @@ class WCHelper:
         self.matcher = re.compile(r"\s+[0-9]+\s+([0-9]+)\s+[0-9]+.*")
         self.bytesize_func = bytesize_func
 
-    def size_as_bytesize(self, size: float | str) -> str:
+    def size_as_bytesize(self, size: Union[float, str]) -> str:
         "Return the size as a bytesize string"
         bs = bytesize_func(size)
         return str(bs)

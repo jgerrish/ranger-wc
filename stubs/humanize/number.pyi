@@ -5,7 +5,7 @@ from typing import TypeAlias, Union
 # I don't know why this is needed
 TYPE_CHECKING: bool
 
-NumberOrString: TypeAlias = "float | str"
+NumberOrString: TypeAlias = Union[float, str]
 
 def ordinal(value: NumberOrString, gender: str = ...) -> str: ...
 def intcomma(value: NumberOrString, ndigits: Union[int, None] = ...) -> str: ...
