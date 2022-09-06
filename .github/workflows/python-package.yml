@@ -41,3 +41,6 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run python -m pytest
+    - name: Typecheck with mypy
+      run: |
+        mypy -m wc_linemode -m wc_helper --config-file mypy.ini
