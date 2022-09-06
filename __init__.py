@@ -1,4 +1,5 @@
-import re, subprocess
+import re
+import subprocess
 
 import ranger.api
 from ranger.core.linemode import LinemodeBase

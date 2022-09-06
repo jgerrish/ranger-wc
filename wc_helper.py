@@ -1,22 +1,44 @@
-# Wordcount support library
+"""
+Wordcount support library
+
+A support library for the ranger wordcount linemode plugin
+"""
 import os
-import re, subprocess
+import re
+import subprocess
 
 from logging import getLogger
 
 LOG = getLogger(__name__)
 
+
+def dummy_bytesize_func(
+    value: float | str,
+    binary: bool = False,
+    gnu: bool = False,
+    format: str = "%.1f",
+) -> str:
+    """
+    Dummy bytesize_func to substitute in if none of the bytesize
+    conversion modules are found.
+    """
+    return ""
+
+
 try:
     LOG.debug("trying to import humanize")
     import humanize
+
     bytesize_func = humanize.naturalsize
 except ImportError:
     LOG.debug("trying to import bytesize")
     try:
         import bytesize
+
         bytesize_func = bytesize.bytesize.Size
     except ImportError:
-        bytesize_func = lambda: ""
+        bytesize_func = dummy_bytesize_func
+
 
 class WCHelper:
     """
@@ -29,14 +51,15 @@ class WCHelper:
     show_large_size = True
 
     def __init__(self):
+        "Initialize a WCHelper class that provides services to the WCLinemode plugin"
         # Compile a regular expression matcher to parse the wc output
         # Capture the second field, which is the number of words in the file
         # This may be platform-dependent
         self.matcher = re.compile(r"\s+[0-9]+\s+([0-9]+)\s+[0-9]+.*")
         self.bytesize_func = bytesize_func
 
-    def size_as_bytesize(self, size):
-        #bs = humanize.naturalsize(size)
+    def size_as_bytesize(self, size: float | str) -> str:
+        "Return the size as a bytesize string"
         bs = bytesize_func(size)
         return str(bs)
 
@@ -81,10 +104,9 @@ class WCHelper:
         if size is None:
             return ""
         # If the size is above our limit, indicate that
-        if (size > WCHelper.max_wc_file_size):
+        if size > WCHelper.max_wc_file_size:
             if WCHelper.show_large_size:
-                return "{}".format(
-                    self.size_as_bytesize(size))
+                return "{}".format(self.size_as_bytesize(size))
             else:
                 return ""
 
@@ -99,7 +121,6 @@ class WCHelper:
             wc_string = self.get_wc_string(res)
             wc = self.get_wc(wc_string)
             if wc:
-                #return "{} {}".format(size, wc)
                 return "{}".format(wc)
 
         return ""

@@ -23,6 +23,8 @@ Copy the directory to your ranger plugins directory:
 
 cp -Ra ranger-wc ~/.config/ranger/plugins
 
+Activate it by typing ":linemode wc" in ranger
+
 Development
 ===========
 
