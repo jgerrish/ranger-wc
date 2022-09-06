@@ -34,6 +34,12 @@ pipenv install
 
 pipenv run python -m pytest
 
+
+To perform type checking with mypy:
+
+mypy -m wc_linemode -m wc_helper --config-file mypy.ini
+
+
 Author
 ======
 
