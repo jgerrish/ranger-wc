@@ -1,0 +1,9 @@
+import gettext as gettext_module
+from typing import Union
+
+def activate(
+    locale: str,
+    path: Union[str, None] = ...,
+) -> gettext_module.NullTranslations: ...
+def deactivate() -> None: ...
+def thousands_separator() -> str: ...
