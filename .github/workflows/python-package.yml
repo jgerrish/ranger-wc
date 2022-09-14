@@ -31,6 +31,11 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv wheel flake8 pytest mypy
         python -m pip install --upgrade pip
+        # mypy isn't seeing packages that are managed with pipenv.
+        # So install them with pip and a requirements.txt file.
+        # This means we have to manage two separate requirements files, but
+        # we don't need to manage type stubs for packages that provide them.
+        python -m pip install -r requirements.txt
         if [ -f Pipfile ]; then pipenv install; fi
     - name: Lint with flake8
       run: |
@@ -43,4 +48,4 @@ jobs:
         pipenv run python -m pytest
     - name: Typecheck with mypy
       run: |
-        mypy -m wc_linemode -m wc_helper --config-file mypy.ini
+        pipenv run mypy -m wc_linemode -m wc_helper --config-file mypy.ini
